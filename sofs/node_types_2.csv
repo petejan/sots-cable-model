@@ -1,0 +1,30 @@
+,,,,Crosby 3/4,Crosby 3/4 SP,Crosby 7/8,Crosby 1,End Link 7/8,End Link 1,Wire 7/16,Wire 3/8,Wire 5/16,Wire 11mm,Wire 9mm,
+item,swl_kg,yield_kg,SF,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,source
+balls_1/2in,5443,27215,5,0,0,0,0,0,0,0,0,0,0,0,https://www.peerlesschain.com/products/ACCO-Trawlex-Chain-Black/
+chain_7/8in,5806,29030,5,0,0,0,0,1,0,0,0,0,0,0,https://www.peerlesschain.com/products/5011047.html
+chain_3/4in,2580,12900,5,1,0,0,0,0,0,0,0,0,0,0,"http://www.pwbanchor.com.au/Products/PWBGradeLChain, 16mm"
+colmega_1in,1650,8300,5,0,0,0,0,0,0,0,0,0,0,0,WHOI use 1650 kg (8300 kg)
+nylon_7/8in,1720,8500,4.9,0,0,0,0,0,0,0,0,0,0,0,WHOI use 1720 kg (8600 kg)
+nystron_1in,3575,14300,4,0,0,0,0,0,0,0,0,0,0,0,"Samson datasheet, min break"
+nystron_7/8in,2600,10400,4,0,0,0,0,0,0,0,0,0,0,0,"Samson datasheet, min break"
+release_dual,5500,33000,6,0,0,0,0,0,0,0,0,0,0,0,8242xs Datasheet
+SOFSbgc,3383,20300,6,0,0,0,0,0,0,0,0,0,0,0,Andrew Filisetti's Notes
+TM,3383,20300,6,0,0,0,0,0,0,0,0,0,0,0,Andrew Martini Analysis
+SOFStm,3383,20300,6,0,0,0,0,0,0,0,0,0,0,0,new TI frame
+SOFScage,3383,20300,6,0,0,0,0,0,0,0,0,0,0,0,
+SOFSdamp,3383,20300,6,0,0,0,0,0,0,0,0,0,0,0,
+SOFSras,3383,20300,6,0,0,0,0,0,0,0,0,0,0,0,
+SOFSadcp,3383,20300,6,0,0,0,0,0,0,0,0,0,0,0,
+SOFSawcp,3383,20300,6,0,0,0,0,0,0,0,0,0,0,0,
+term_A,6890,34450,5,0,0,1,1,0,1,0,0,0,0,0,"1"" shackle is 8500 (51000), 7/8"" shackle is 6500 (39000), 1"" End link 6890 (34450) - Crosby datasheet"
+term_AB,6500,34450,5.3,0,0,1,0,0,1,1,0,0,0,0,"7/8"" shackle is 6500 (39000), 1"" End link 6890 (34450) "
+term_B,5440,27200,5,0,0,1,0,1,0,1,0,0,0,0,"7/8"" shackle is 6500 (39000), 7/8"" End link 5440 (27200) "
+term_C,4750,27200,5,0,0,1,0,1,0,0,1,0,0,0,"3/4"" shackle is 4750 (28500), 7/8"" End link 5440 (27200) "
+term_e,4750,27200,5,1,0,0,0,0,0,0,1,0,0,0,"3/4"" shackle is 4750 (28500), 7/8"" End link 5440 (27200) "
+term_F,4750,27200,5,1,0,0,0,0,0,0,1,0,0,0,"3/4"" shackle is 4750 (28500), 7/8"" End link 5440 (27200) "
+term_splice,1650,8300,5,0,0,0,0,0,0,0,0,0,0,0,colmega 1in
+term_trans,1720,8500,4.9,0,0,0,0,0,0,0,0,0,0,0,nylon 1in
+torqbal_3/8in,2237,6710,3,0,0,0,0,0,0,1,0,0,0,0,WHOI use 2240 kg (6715 kg)
+torqbal_7/16in,3023,9070,3,0,0,0,0,0,0,1,0,0,0,0,WHOI use 3020 kg (9100 kg)
+trawler_1/2in,5443,27215,5,0,0,0,0,0,0,0,0,0,0,0,https://www.peerlesschain.com/products/ACCO-Trawlex-Chain-Black/
+elastomer_35mmx10,2000,3500,1.75,0,0,0,0,0,0,0,0,0,0,0,10xTTH-1 buoy tech
