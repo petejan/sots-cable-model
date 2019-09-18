@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License 
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# script to run model for each wave condition (load case)
-
 source wave-env.sh
 
 if [ -z "$1" ] 
@@ -26,7 +24,7 @@ else
   file="${1%.*}"
 fi
 
-cable -in ${file}.cbl -bom -DPERIOD=0 -DCF=1 -DSWH=0 -DWIND=0 -DLEN_PP=${LEN_PP} -DLEN_NY=${LEN_NY} -DLEN_WIRE=${LEN_WIRE} > output/${file}.bom
+cable -in ${file}.cbl -bom -DPERIOD=0 -DCF=1 -DSWH=0 -DWIND=0 > output/${file}.bom
 if [ $? -eq 0 ]
 then
   echo "Successfully created BOM file"
@@ -35,9 +33,8 @@ else
   exit 1
 fi
 
-nodes=$(grep '[0-9]. term_' output/${file}.bom | cut -b 59-)
-
-awk -F' '  '/^[0-9]/ { print $7 "," $2 "," $6 }' output/${file}.bom > output/${file}-nodes.csv
+#nodes=$(grep '[0-9]. term_' output/${file}.bom | cut -b 59-)
+#awk -F' '  '/^[0-9]/ { print $7 "," $2 "," $6 }' output/${file}.bom > output/${file}-nodes.csv
 
 echo "FILENO,SWH,PERIOD,WIND,PROB" > output/${file}-simValue.csv
 
@@ -47,8 +44,9 @@ sort -g output/${file}-simValue.csv > output/${file}-simValue1.csv
 
 echo
 echo "Survival Simulation"
-echo -DPERIOD=15 -DCF=2 -DSWH=19 -DLEN_PP=${LEN_PP} -DLEN_NY=${LEN_NY} -DLEN_WIRE=${LEN_WIRE} -DWIND=${WIND[${#WIND[@]}-1]}
-cable -in ${file}.cbl -out output/${file}-survival.crs -sample ${DT} -snap_dt ${SNAP_DT} -nodes ${nodes} -DPERIOD=${PERIOD[${#PERIOD[@]}-1]} -DCF=2 -DSWH=${SWH[${#SWH[@]}-1]} -DLEN_PP=${LEN_PP} -DLEN_NY=${LEN_NY} -DLEN_WIRE=${LEN_WIRE} -DWIND=${WIND[${#WIND[@]}-1]} -quiet 
+echo -DPERIOD=${PERIOD[${#PERIOD[@]}-1]} -DCF=2 -DSWH=${SWH[${#SWH[@]}-1]} -DWIND=${WIND[${#WIND[@]}-1]}
+#cable -in ${file}.cbl -out output/${file}-survival.crs -sample ${DT} -snap_dt ${SNAP_DT} -nodes ${nodes} -DPERIOD=${PERIOD[${#PERIOD[@]}-1]} -DCF=2 -DSWH=${SWH[${#SWH[@]}-1]} -DWIND=${WIND[${#WIND[@]}-1]} -quiet 
+cable -in ${file}.cbl -out output/${file}-survival.crs -sample ${DT} -snap_dt ${SNAP_DT} -first -last -connectors -DPERIOD=${PERIOD[${#PERIOD[@]}-1]} -DCF=2 -DSWH=${SWH[${#SWH[@]}-1]} -DWIND=${WIND[${#WIND[@]}-1]} -quiet 
 if [ $? -eq 0 ]
 then
   echo "Successfully created file survival file"

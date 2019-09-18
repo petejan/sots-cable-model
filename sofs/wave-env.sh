@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License 
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# this file sets up the wave cases
-
 SNAP_DT=1
 DT=0.1
 
@@ -59,9 +57,5 @@ PROB=(0.00 0.12 5.22 17.10 23.57 23.28 14.83 8.16 4.14 1.83 0.96 0.51 0.18 0.06 
 #SWH=(5.0  5.0  5.0  5.0)
 #PERIOD=(8.4  8.4  8.4  8.4)
 #WIND=(7.1  9.6 19.4 27.9)
-
-LEN_PP=1725
-LEN_NY=2200
-LEN_WIRE=350
 
 tLen=${#SWH[@]}

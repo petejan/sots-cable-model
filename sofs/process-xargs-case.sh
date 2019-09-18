@@ -19,15 +19,16 @@ source wave-env.sh
 
 #echo "input SWH : " ${SWH}
 
-if [ -z "$1" ] 
- then
-  file=sofs1
-else
-  file="${1%.*}"
-fi
+file="${1%.*}"
 
 # get a list of nodes to sample
-nodes=$(grep '[0-9]. term_' output/${file}.bom | cut -b 59-)
+if [ ${file}.cbl -nt output/${file}.bom ] 
+then
+  echo "Create BOM"
+  cable -in ${file}.cbl -bom -DPERIOD=0 -DCF=1 -DSWH=0 -DWIND=0 > output/${file}.bom
+fi
+
+#nodes=$(grep '[0-9]. term_' output/${file}.bom | cut -b 59-)
 
 i=$2
 
@@ -35,7 +36,8 @@ i=$2
   echo
   echo 'FILE SWH PERIOD :' ${fileno} ' ' ${SWH[i]} ' ' ${PERIOD[i]}
 
-  cable -in ${file}.cbl -out output/${file}-n${fileno}.crs -sample ${DT} -snap_dt ${SNAP_DT} -nodes ${nodes} -DPERIOD=${PERIOD[i]} -DCF=0.2 -DSWH=${SWH[i]} -DLEN_PP=${LEN_PP} -DLEN_NY=${LEN_NY} -DLEN_WIRE=${LEN_WIRE} -DWIND=${WIND[i]} -quiet 
+  #cable -in ${file}.cbl -out output/${file}-n${fileno}.crs -sample ${DT} -snap_dt ${SNAP_DT} -nodes ${nodes} -DPERIOD=${PERIOD[i]} -DCF=1.0 -DSWH=${SWH[i]} -DWIND=${WIND[i]} -quiet 
+  cable -in ${file}.cbl -out output/${file}-n${fileno}.crs -sample ${DT} -snap_dt ${SNAP_DT} -first -last -connectors -DPERIOD=${PERIOD[i]} -DCF=1.0 -DSWH=${SWH[i]} -DWIND=${WIND[i]} -quiet 
   if [ $? -eq 0 ]
   then
     echo "Successfully created file " ${fileno}

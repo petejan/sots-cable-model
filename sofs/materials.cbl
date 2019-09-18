@@ -3,9 +3,9 @@ Materials
         type=linear        diam=0.15        wet=351        mass=90.9091        length=1.94
         Cdn=1        Cdt=0.05        EA=5e+07           EI=82900        GJ=10000
         SWL=0        yield=0
-        comment="EG&G 322 acoustic release - made up"
+        comment="EG&G 322 acoustic release - made up in double configuration"
     balls_1/2in
-        type=linear        diam=0.0475        wet=-217.5        mass=21.712        length=0
+        type=linear        diam=0.1475        wet=-217.5        mass=21.712        length=0
         Cdn=2.6        Cdt=0.7        EA=6e+07           EI=1.0        GJ=0.0001
         SWL=0        yield=0
         comment=STIFF
@@ -28,17 +28,17 @@ Materials
         type=linear        diam=0.0254        wet=0.7957        mass=0.47        length=0
         Cdn=1.5        Cdt=0.005        EA=748784           EI=1.0/10        GJ=0.01
         SWL=0        yield=0
+    nystron_2in
+        type=linear        diam=0.048   wet=1.5914           mass=0.94        length=0
+        Cdn=1.5        Cdt=0.005        EA=2632350           EI=1.0/10        GJ=0.01
+        SWL=0        yield=0
     nystron_7/8in
         type=linear        diam=0.02222        wet=0.597        mass=0.3526        length=0
         Cdn=1.5        Cdt=0.005        EA=570855        EI=1.0/10        GJ=0.01
            SWL=0        yield=0
-    ftorqbal_3/8in
-        type=linear        diam=0.009525        wet=2.7901        mass=0.3273        length=0
-        Cdn=1.5        Cdt=0.005        EA=4.944e+06        EI=0.1        GJ=1
-        SWL=0        yield=0
-    ftorqbal_7/16in
-        type=linear        diam=0.01099        wet=3.8554        mass=0.4522        length=0
-        Cdn=1.5        Cdt=0.005        EA=6.577e+06        EI=0.1        GJ=1
+    torqbal_9mm
+        type=linear        diam=0.009        wet=2.636        mass=0.31        length=0
+        Cdn=1.5        Cdt=0.005        EA=4.944e+06        EI=1        GJ=1
         SWL=0        yield=0
     torqbal_3/8in
         type=linear        diam=0.009525        wet=2.7901        mass=0.3273        length=0
@@ -48,6 +48,11 @@ Materials
         type=linear        diam=0.01099        wet=3.8554        mass=0.4522        length=0
         Cdn=1.5        Cdt=0.005        EA=6.577e+06        EI=1        GJ=1
         SWL=0        yield=0
+    dynex_8mm 
+        type=linear        diam=0.008        wet=-0.35        mass=0.076        length=0
+        Cdn=1.5        Cdt=0.005        EA=5e+05        EI=1        GJ=1
+        SWL=0        yield=0
+        comment="density = 0.97 g/cm^3, Modulus = 107 GPa"
     SOFScageWHOIorig
         type=linear    diam=0.6      wet=350     mass=134  length=1.85
         Cdn=1          Cdt=0.1       EA=1e+06    EI=82900  GJ=10000
@@ -57,16 +62,31 @@ Materials
         Cdn=1        Cdt=0.1        EA=1e+06        EI=82900        GJ=10000
         SWL=0        yield=0
         comment="mass 12.4(RCM)+18(cage)=30kg/1.85=16.3 kg/m 7.2+15.7=23kg=225/1.85=122 N/m, was 135, 350"
+    SOFSbgc
+        type=linear        diam=0.2           wet=225.0        mass=30        length=1.0
+        Cdn=1.0        Cdt=0.1        EA=1e+06        EI=82900        GJ=10000
+        SWL=0        yield=0
+        comment="SOFS BGC package SBE37, GTD, FLNTUS, PAR"
+    SOFScageHD
+        type=linear        diam=0.2           wet=225.0        mass=30        length=1.0
+        Cdn=1        Cdt=1.4        EA=1e+06        EI=82900        GJ=10000
+        SWL=0        yield=0
+        comment="mass 12.4(RCM)+18(cage)=30kg/1.85=16.3 kg/m 7.2+15.7=23kg=225/1.85=122 N/m, was 135, 350"
     SOFSawcp
-        type=linear        diam=0.2           wet=350        mass=54        length=1.85
+        type=linear        diam=0.6           wet=450        mass=74        length=1.85
         Cdn=1        Cdt=0.1        EA=1e+06        EI=82900        GJ=10000
         SWL=0        yield=0
         comment="mass 100kg = 54/m kg, wet 650N = 350 N/m"
     SOFSadcp
         type=linear        diam=1.0           wet=524        mass=74        length=1.85
-        Cdn=1        Cdt=0.1        EA=1e+06        EI=82900        GJ=10000
+        Cdn=0.8        Cdt=0.1        EA=1e+06        EI=82900        GJ=10000
         SWL=0        yield=0
         comment="mass 137kg = 74/m kg, wet 970N = 524 N/m"
+    SOFSras
+        type=linear        diam=1.0           wet=1170        mass=173        length=1.85
+        Cdn=1        Cdt=0.1        EA=1e+06        EI=82900        GJ=10000
+        SWL=0        yield=0
+        comment="mass 320kg = 173/m kg, wet 2150N = 1170 N/m"
     chain_3/4in
         type=linear        diam=0.0681        wet=73.7084        mass=8.643        length=0
         Cdn=0.55        Cdt=0.05        EA=1.3e+08           EI=1.0        GJ=0.0001
@@ -121,5 +141,7 @@ Materials
         type=linear        diam=0.0953        wet=123.8        mass=14.5        length=0.29
         Cdn=0.55        Cdt=0.05        EA=1.3e+08           EI=1.0        GJ=0.0001
         SWL=0        yield=0
-
+    seacat      
+        EA = 5.0e7  EI = 1000.0 GJ = 1000.0   m = 5.5   wet = 3
+        d = 0.1   Cdt = 0.7  Cdn = 1.0 Cmt = 1.09    Cmn = 2.0
 
