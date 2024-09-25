@@ -3,14 +3,20 @@ import sys
 import os
 import pandas as pd
 
+# create the output directory
+try:
+    os.mkdir('output')
+except OSError as error:
+    pass
+
+# get the load case data
 load_cases = pd.read_excel('load_case_data.xlsx')
 
+# get the file name to generate from
 input_fn = sys.argv[1]
 
+# just the file name part
 file = input_fn.replace('.cbl', '')
-#batch_fn = os.path.basename(file) + '.cmd'
-#print('batch file : ' + batch_fn)
-#bat_file = open(batch_fn, 'w')
 
 out_fn = 'output/' + os.path.basename(file) + '-'
 
