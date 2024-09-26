@@ -1,4 +1,5 @@
 @echo off
+cable-no-x-static -bom -in output\sofs12-case2-n01.cbl -out output\sofs12-case2-n01.bom
 SETLOCAL EnableDelayedExpansion
 FOR %%i IN ("output\*.cbl") DO (
 	ECHO %%i

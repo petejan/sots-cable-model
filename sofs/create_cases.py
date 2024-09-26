@@ -13,7 +13,10 @@ except OSError as error:
 load_cases = pd.read_excel('load_case_data.xlsx')
 
 # get the file name to generate from
-input_fn = sys.argv[1]
+if len(sys.argv) > 1:
+    input_fn = sys.argv[1]
+else:
+    input_fn = 'sofs12-case2.cbl'
 
 # just the file name part
 file = input_fn.replace('.cbl', '')
@@ -53,7 +56,4 @@ with open(input_fn, 'r') as file_in:
             # text file 
             file.write(data) 
 
-        #bat_file.write('cable-no-x-static -in '+fn+'.cbl -out '+fn+'.crs -sample 0.1 -snap_dt 1 -connectors -first -last -quiet\n'.format(i, i))
-        #bat_file.write('res2mat -in '+fn+'.crs -out '+fn+'.mat\n'.format(i, i))
-
-#bat_file.close()
+            file.close()
