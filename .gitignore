@@ -2,3 +2,5 @@ sots/output
 *~
 */.DS_Store
 .DS_Store
+sofs/output/*
+.idea
