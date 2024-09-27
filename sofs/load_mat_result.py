@@ -12,6 +12,7 @@ bom_regex = re.compile(r"(\d{4}) *(\S*) *(\S*) *(\d*) *(\S*) *(\S*) *(\S*)$")
 
 load_cases = pd.read_excel('load_case_data.xlsx')
 
+# process all files in output directory ending in .mat
 case_files = glob.glob('output/*.mat')
 
 # read the bom file into a dict array
@@ -30,6 +31,9 @@ fig_std = make_subplots(rows=2, cols=1, shared_xaxes=True)
 fig_stats = make_subplots(rows=1, cols=2, shared_yaxes=True)
 fig_spec = go.Figure()
 
+# TODO: Map between load_case id and case file
+T_std = []
+APD = []
 n = 0
 for f in case_files:
     print('file : ', f)
@@ -45,14 +49,14 @@ for f in case_files:
 
     t = np.squeeze(res['t'])
     T_t = res['T_t']
-    T_std = np.std(T_t, axis=0)
+    T_std.append(np.std(T_t, axis=0))
     T_max = np.max(T_t, axis=0)+df['T'][nodes]
     T_min = np.min(T_t, axis=0)+df['T'][nodes]
 
-    #fig_std.add_trace(go.Scatter(x=[*range(0, len(T_std))], y=T_std, mode='markers', name='nodes'))
-    fig_std.add_trace(go.Scatter(x=np.ones_like(T_std)*load_cases['SWH'][n], y=T_std, mode='markers', name='std'), row=1, col=1)
-    fig_std.add_trace(go.Scatter(x=np.ones_like(T_std) * load_cases['SWH'][n], y=T_max, mode='markers', name='max', marker_color="blue"), row=2, col=1)
-    fig_std.add_trace(go.Scatter(x=np.ones_like(T_std) * load_cases['SWH'][n], y=T_min, mode='markers', name='min', marker_color="lightskyblue"), row=2, col=1)
+    #fig_std.add_trace(go.Scatter(x=[*range(0, len(T_std[n]))], y=T_std[n], mode='markers', name='nodes'))
+    fig_std.add_trace(go.Scatter(x=np.ones_like(T_std[n])*load_cases['SWH'][n], y=T_std[n], mode='markers', name='std'), row=1, col=1)
+    fig_std.add_trace(go.Scatter(x=np.ones_like(T_std[n]) * load_cases['SWH'][n], y=T_max, mode='markers', name='max', marker_color="blue"), row=2, col=1)
+    fig_std.add_trace(go.Scatter(x=np.ones_like(T_std[n]) * load_cases['SWH'][n], y=T_min, mode='markers', name='min', marker_color="lightskyblue"), row=2, col=1)
 #    fig_std.add_trace(go.Scatter(y=T_t[:,0], x=t, mode='markers', name='nodes'))
     fig_std.update_yaxes(range=[0, None], row=1, col=1)
 
@@ -67,15 +71,17 @@ for f in case_files:
     fig_spec.add_trace(go.Scatter(x=f, y=10*np.log10(S[:, 1]), mode='lines', name=str(1)))
 
     # calculate the load period for each mode along the line
-    m0 = np.sum(S[2:-1, :],axis=0) * f[1]
+    m0 = np.sum(S[2:-1, :], axis=0) * f[1]
     fsq = np.power(f, 2)
     m2 = np.sum(np.tile(fsq[2:-1], reps=(98, 1)) * S[2:-1, :].transpose(), axis=1) * f[1]
-    APD = np.sqrt(m0 / m2)
+    APD.append(np.sqrt(m0 / m2))
 
-    # plot, order by depth
-    depth_order = np.argsort(df['z'][nodes].values)
-    fig_stats.add_trace(go.Scatter(x=T_std[depth_order], y=df['z'][nodes].values[depth_order], mode='lines+markers', name='std'), row=1, col=1)
-    fig_stats.add_trace(go.Scatter(x=APD[depth_order], y=df['z'][nodes].values[depth_order], mode='lines+markers', name='period'), row=1, col=2)
+    # plot, order by node number (length along line)
+    depth_order = np.argsort(nodes)
+    fig_stats.add_trace(go.Scatter(x=T_std[n][depth_order], y=df['z'][nodes].values[depth_order], mode='lines+markers', name='std'+str(n)), row=1, col=1)
+    fig_stats.add_trace(go.Scatter(x=APD[n][depth_order], y=df['z'][nodes].values[depth_order], mode='lines+markers', name='period'+str(n)), row=1, col=2)
+    fig_stats.update_xaxes(range=[0, None])
+    fig_stats.update_yaxes(range=[0, None])
 
     n = n + 1
 
@@ -87,13 +93,38 @@ fig_std.show()
 fig_spec.show()
 fig_stats.show()
 
-# fig = go.Figure()
-# for i in range(Pxx_den.shape[1]):
-#     fig.add_trace(go.Scatter(x=f, y=10*np.log10(Pxx_den[:,i]), mode='lines', name=str(i)))
-# fig.show()
+# Fatigue analysis
+#  calculate the number of cycles at each state
+#  calculate the fatigue damage done at each state
+#  sum the damage over all states for each item
 
-    # m0 = sum(S(2:end,:))*f(2);
-    # fsq = f.^2;
-    # m2 = sum((S(2:end,:)).*fsq(2:end),1)*f(2);
-    # APD = sqrt(m0./m2);
-
+# deployment_days = 365;
+# deployment_sec = deployment_days * 24 * 3600;
+#
+# % load items.mat
+#
+# nodeInfo = readtable('node_types.xlsx');
+node_info = pd.read_excel('node_types.xlsx')
+#
+# % calculate the Palmgren-Miner calculation of number of cycle fatigue
+# % damage at each load case
+#
+# item_y = nodeInfo.yf(~isnan(nodeInfo.qf)).*nodeInfo.yield_kg(~isnan(nodeInfo.qf))*9.81;
+# item_q = nodeInfo.qf(~isnan(nodeInfo.qf));
+#
+# % life_deployment = zeros(size(tension_period,2), size(item_y,2));
+# % for i=1:size(tension_period,2)
+# %     tension_cycles_per_year=1./tension_period(:,i)'.*loadCases.PROB'/100*deployment_sec;
+# %     N=(sqrt(2)*tension_std(:,i)'./item_y).^item_q'.*gamma(1+item_q'/2).*tension_cycles_per_year';
+# %     sumN = sum(N,2);
+# %     life_deployment(i,:) = 1./sumN;
+# % end
+#
+# tension_cycles_per_year = 1./tension_period .* loadCases.PROB/100 * deployment_sec;
+# ity = repmat(item_y, [1, size(tension_std,2), size(tension_std,1)]);
+# itq = repmat(item_q, [1, size(tension_std,2), size(tension_std,1)]);
+# its = permute(repmat(tension_std, [1, 1, size(item_y)]), [3 2 1]);
+# itc = permute(repmat(tension_cycles_per_year, [1, 1, size(item_y,1)]), [3 2 1]);
+#
+# N1 = (sqrt(2) * its ./ ity) .^ itq .* gamma(1+itq/2) .* itc;
+# life_deployment1 = 1./sum(N1, 3);
