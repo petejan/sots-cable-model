@@ -9,19 +9,21 @@ try:
 except OSError as error:
     pass
 
-# get the load case data
-load_cases = pd.read_excel('load_case_data.xlsx')
-
 # get the file name to generate from
 if len(sys.argv) > 1:
     input_fn = sys.argv[1]
 else:
-    input_fn = 'sofs12-case2.cbl'
+    input_fn = 'sofs/sofs12-case2.cbl'
+
+(path, name) = os.path.split(input_fn)
 
 # just the file name part
-file = input_fn.replace('.cbl', '')
+(file, ext) = os.path.splitext(name)
 
-out_fn = 'output/' + os.path.basename(file) + '-'
+out_fn = path + '/output/' + file + '-'
+
+# get the load case data
+load_cases = pd.read_excel(path + '/' + 'load_case_data.xlsx')
 
 # Opening our text file in read only 
 # mode using the open() function 
