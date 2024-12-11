@@ -4,6 +4,7 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 from scipy import signal
+from scipy.special import gamma
 
 import glob
 import re
@@ -14,6 +15,8 @@ load_cases = pd.read_excel('sofs/load_case_data.xlsx')
 
 # process all files in output directory ending in .mat
 case_files = glob.glob('sofs/output/*.mat')
+
+case_files.sort()
 
 # read the bom file into a dict array
 bom = []
@@ -31,7 +34,6 @@ fig_std = make_subplots(rows=2, cols=1, shared_xaxes=True)
 fig_stats = make_subplots(rows=1, cols=2, shared_yaxes=True)
 fig_spec = go.Figure()
 
-# TODO: Map between load_case id and case file
 T_std = []
 APD = []
 n = 0
@@ -98,19 +100,27 @@ fig_stats.show()
 #  calculate the fatigue damage done at each state
 #  sum the damage over all states for each item
 
-# deployment_days = 365;
-# deployment_sec = deployment_days * 24 * 3600;
+deployment_days = 365
+deployment_sec = deployment_days * 24 * 3600
+
 #
 # % load items.mat
 #
 # nodeInfo = readtable('node_types.xlsx');
 node_info = pd.read_excel('sofs/node_types.xlsx')
+
+#
+# create matrix of all data/params as load case-node-item
+#
+
 #
 # % calculate the Palmgren-Miner calculation of number of cycle fatigue
 # % damage at each load case
 #
-# item_y = nodeInfo.yf(~isnan(nodeInfo.qf)).*nodeInfo.yield_kg(~isnan(nodeInfo.qf))*9.81;
+#item_y = node_info.yf(~isnan(node_info.qf)).*node_info.yield_kg(~isnan(node_info.qf))*9.81
 # item_q = nodeInfo.qf(~isnan(nodeInfo.qf));
+item_y = node_info['yf']*node_info['yield_kg']*9.81
+item_q = node_info['qf']
 #
 # % life_deployment = zeros(size(tension_period,2), size(item_y,2));
 # % for i=1:size(tension_period,2)
@@ -125,6 +135,46 @@ node_info = pd.read_excel('sofs/node_types.xlsx')
 # itq = repmat(item_q, [1, size(tension_std,2), size(tension_std,1)]);
 # its = permute(repmat(tension_std, [1, 1, size(item_y)]), [3 2 1]);
 # itc = permute(repmat(tension_cycles_per_year, [1, 1, size(item_y,1)]), [3 2 1]);
-#
+
+item_shape = item_y.shape
+its = np.repeat(np.array(T_std)[:, :, np.newaxis], item_shape[0], axis=2)
+its_shape = its.shape
+
+lcp = load_cases['PROB'].to_numpy()/100
+tension_cycles_per_year = 1/np.array(APD) * np.repeat(lcp[:, np.newaxis], its_shape[1], axis=1) * deployment_sec
+itc = np.repeat(np.array(tension_cycles_per_year)[:, :, np.newaxis], item_shape[0], axis=2)
+
+ity = np.repeat(np.repeat(item_y.to_numpy()[np.newaxis, :], its_shape[1], axis=0)[np.newaxis, :], its_shape[0], axis=0)
+itq = np.repeat(np.repeat(item_q.to_numpy()[np.newaxis, :], its_shape[1], axis=0)[np.newaxis, :], its_shape[0], axis=0)
+
 # N1 = (sqrt(2) * its ./ ity) .^ itq .* gamma(1+itq/2) .* itc;
 # life_deployment1 = 1./sum(N1, 3);
+
+N1 = np.power((np.sqrt(2) * its / ity), itq) * gamma(1+itq/2) * itc
+life_deployment = 1/np.sum(N1, axis=0)
+
+#print(life_deployment)
+
+z = res['z']
+#nodes = res['nodes']
+
+node_names = np.empty(bom[0]['node'], dtype=object)
+
+for b in bom:
+    print(b)
+    node_n = b['node']
+    node_names[node_n - b['nodes']:node_n] = b['segment']
+
+life_data_frame = pd.DataFrame(life_deployment, index=node_names[nodes], columns=node_info['model item'])
+life_data_frame.insert(loc=0, column='node', value=nodes)
+life_data_frame.insert(loc=1, column='z', value=res['depth'] - z[nodes])
+life_data_frame.insert(loc=2, column='T_max', value=np.array(T_max))
+life_data_frame.insert(loc=3, column='T_min', value=np.array(T_min))
+life_data=life_data_frame.merge(node_info, left_index=True, right_on='model item')
+life_data.sort_values(by=['node'], ascending=False, inplace=True)
+
+life_data.to_excel('sofs/life-depth-order.xlsx')
+
+print(life_data)
+
+# do SWL checks

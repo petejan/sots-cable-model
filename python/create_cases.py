@@ -3,12 +3,6 @@ import sys
 import os
 import pandas as pd
 
-# create the output directory
-try:
-    os.mkdir('output')
-except OSError as error:
-    pass
-
 # get the file name to generate from
 if len(sys.argv) > 1:
     input_fn = sys.argv[1]
@@ -20,7 +14,15 @@ else:
 # just the file name part
 (file, ext) = os.path.splitext(name)
 
+print('path : ', path, ' file : ', file)
+
 out_fn = path + '/output/' + file + '-'
+
+# create the output directory
+try:
+    os.mkdir(path + '/output')
+except OSError as error:
+    pass
 
 # get the load case data
 load_cases = pd.read_excel(path + '/' + 'load_case_data.xlsx')
@@ -41,10 +43,10 @@ with open(input_fn, 'r') as file_in:
         # for each key in the load case file (except the No and PROB columns)
         # Searching and replacing the text using the replace() function
         for lc in load_cases.keys():
-            if lc not in ('No', 'PROB'):
+            if lc not in ('ID', 'PROB'):
                 data = data.replace(lc, str(load_cases[lc][i]))
 
-        fn = out_fn+load_cases['No'][i]
+        fn = out_fn+load_cases['ID'][i]
 
         # Opening our text file in write only
         # mode to write the replaced content 
