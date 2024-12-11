@@ -37,6 +37,8 @@ fig_spec = go.Figure()
 T_std = []
 APD = []
 n = 0
+T_max = None
+T_min = None
 for f in case_files:
     print('file : ', f)
 
@@ -52,8 +54,16 @@ for f in case_files:
     t = np.squeeze(res['t'])
     T_t = res['T_t']
     T_std.append(np.std(T_t, axis=0))
-    T_max = np.max(T_t, axis=0)+df['T'][nodes]
-    T_min = np.min(T_t, axis=0)+df['T'][nodes]
+    if T_max is None:
+        T_max = np.max(T_t, axis=0)+df['T'][nodes]
+    else:
+        T1 = np.max(T_t, axis=0)+df['T'][nodes]
+        T_max = np.max([T1, T_max], axis=0)
+    if T_min is None:
+        T_min = np.min(T_t, axis=0)+df['T'][nodes]
+    else:
+        T1 = np.min(T_t, axis=0)+df['T'][nodes]
+        T_min = np.min([T1, T_min], axis=0)
 
     #fig_std.add_trace(go.Scatter(x=[*range(0, len(T_std[n]))], y=T_std[n], mode='markers', name='nodes'))
     fig_std.add_trace(go.Scatter(x=np.ones_like(T_std[n])*load_cases['SWH'][n], y=T_std[n], mode='markers', name='std'), row=1, col=1)
@@ -62,10 +72,8 @@ for f in case_files:
 #    fig_std.add_trace(go.Scatter(y=T_t[:,0], x=t, mode='markers', name='nodes'))
     fig_std.update_yaxes(range=[0, None], row=1, col=1)
 
-    fig.add_trace(go.Scatter(x=df['T'], y=df['z'], mode='lines', name='lines'))
-    fig.add_trace(go.Scatter(x=df['T'][nodes], y=df['z'][nodes], mode='markers', name='nodes'))
-    fig.update_xaxes(range=[0, None])
-    fig.update_yaxes(range=[0, None])
+    fig.add_trace(go.Scatter(x=df['T'], y=(depth-df['z']), mode='lines', name='lines'))
+    fig.add_trace(go.Scatter(x=df['T'][nodes], y=(depth-df['z'][nodes]), mode='markers', name='nodes'))
 
     # calculate the spectrum for each node
     f, S = signal.welch(T_t, fs, nperseg=256, nfft=256, noverlap=71, axis=0, window='hamm')
@@ -87,8 +95,6 @@ for f in case_files:
 
     n = n + 1
 
-fig.update_layout(template='plotly_white', xaxis_title="tension (N)", yaxis_title="z")
-fig.show()
 fig_std.update_layout(template='plotly_white', xaxis_title="SWH (m)", yaxis_title="load-std (N)")
 fig_std.update_layout(template='plotly_white', xaxis_title="SWH (m)", yaxis_title="load (N)")
 fig_std.show()
@@ -165,16 +171,32 @@ for b in bom:
     node_n = b['node']
     node_names[node_n - b['nodes']:node_n] = b['segment']
 
+node_info['swl_N'] = node_info['swl_kg']*9.81
 life_data_frame = pd.DataFrame(life_deployment, index=node_names[nodes], columns=node_info['model item'])
 life_data_frame.insert(loc=0, column='node', value=nodes)
 life_data_frame.insert(loc=1, column='z', value=res['depth'] - z[nodes])
-life_data_frame.insert(loc=2, column='T_max', value=np.array(T_max))
-life_data_frame.insert(loc=3, column='T_min', value=np.array(T_min))
-life_data=life_data_frame.merge(node_info, left_index=True, right_on='model item')
-life_data.sort_values(by=['node'], ascending=False, inplace=True)
+life_data_frame.sort_values(by=['node'], ascending=False, inplace=True)
 
-life_data.to_excel('sofs/life-depth-order.xlsx')
+life_data_frame.to_excel('sofs/life-depth-order.xlsx')
 
-print(life_data)
+print(life_data_frame)
 
 # do SWL checks
+
+swl_table = pd.DataFrame(T_max, index=node_names[nodes], columns=['tension_max'])
+swl_table.insert(loc=0, column='node', value=nodes)
+swl_table.insert(loc=1, column='z', value=res['depth'] - z[nodes])
+swl_t = swl_table.merge(node_info, left_index=True, right_on='model item', how='left')
+swl_t.sort_values(by=['node'], ascending=False, inplace=True)
+swl_t.to_excel('sofs/swl-depth.xlsx')
+
+fig.add_trace(go.Scatter(x=swl_t['swl_N'], y=swl_t['z'], mode='markers', name='swl'))
+
+#fig.update_layout(template='plotly_white', xaxis_title="tension (N)", yaxis_title="z")
+#fig.update_xaxes(range=[0, None])
+fig.update_yaxes(autorange="reversed", type='log')
+fig.update_yaxes(range=[1, 5000])
+
+fig.show()
+
+print(swl_t)
