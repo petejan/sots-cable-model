@@ -120,45 +120,45 @@ Layout
 */
     segment = {        length = 149      material = torqbal_7/16in  nodes = (150, 1) attachments = sbe37 : (16 3) }
     connector = pivot
-    segment = {        length = 0.32     material = term_AB        nodes = (3, 1)    }
+    segment = {        length = 0.32     material = term_B        nodes = (3, 1)    }
     connector = pivot
 /* 50 m */
     segment = {        length = 1.0     material = TM        nodes = (10, 1)    }
     connector = pivot
  
-    segment = {        length = 0.32     material = term_AB        nodes = (3, 1)    }
+    segment = {        length = 0.32     material = term_B        nodes = (3, 1)    }
     connector = pivot
     segment = {        length = 19.5     material = torqbal_7/16in        nodes = (18, 1)    }
     connector = pivot
-    segment = {        length = 0.32     material = term_AB        nodes = (3, 1)    }
+    segment = {        length = 0.32     material = term_B        nodes = (3, 1)    }
     connector = pivot
 /* 30m */
     segment = {        length = 0.5        material = chain_7/8in        nodes = (6, 1)    }
     connector = pivot
-    segment = {        length = 0.32     material = term_AB        nodes = (3, 1)    }
+    segment = {        length = 0.32     material = term_B        nodes = (3, 1)    }
     connector = pivot
 
     segment = {        length = 1.0     material = SOFSbgc        nodes = (10, 1)    }
     connector = pivot
            
-    segment = {        length = 0.32     material = term_AB        nodes = (3, 1)    }
+    segment = {        length = 0.32     material = term_B        nodes = (3, 1)    }
     connector = pivot
     segment = {        length = 0.5        material = chain_7/8in        nodes = (6, 1)    }
     connector = pivot
 
-    segment = {        length = 0.32     material = term_AB        nodes = (3, 1)    }
+    segment = {        length = 0.32     material = term_B        nodes = (3, 1)    }
     connector = pivot
     segment = {        length = 19.5     material = torqbal_7/16in  nodes = (23, 1) attachments = sbe37 : (13 3) }
     connector = pivot
-    segment = {        length = 0.32     material = term_AB        nodes = (3, 1)    }
+    segment = {        length = 0.32     material = term_B        nodes = (3, 1)    }
     connector = pivot
     segment = {        length = 1.0        material = chain_7/8in        nodes = (6, 1)    }
     connector = pivot
-    segment = {        length = 0.32     material = term_A        nodes = (3, 1)    }
+    segment = {        length = 0.32     material = term_B        nodes = (3, 1)    }
     connector = pivot
     segment = {        length = 7.5        material = chain_7/8in        nodes = (6, 1)    }
     connector = pivot
-    segment = {        length = 0.33     material = term_A        nodes = (3, 1)    }
+    segment = {        length = 0.33     material = term_AB        nodes = (3, 1)    }
       /*    connector = pivot */
     terminal = {       buoy = discus_2.7m       x = 0       y = 0       z = 0    }
 
